@@ -51,12 +51,17 @@ jobs:
               "mcpServers": {
                 "playwright": {
                   "command": "npx",
-                  "args": ["@playwright/mcp@latest", "--browser", "chromium"]
+                  "args": [
+                    "@playwright/mcp@latest",
+                    "--allowed-origins",
+                    "localhost:3000;cdn.tailwindcss.com;esm.sh"
+                  ]
                 }
               }
             }
 
           claude_args: >-
+            --allowedTools "Bash(npm run *),Bash(sqlite3:*),mcp__playwright__browser_navigate,mcp__playwright__browser_snapshot,mcp__playwright__browser_click,mcp__playwright__browser_type,mcp__playwright__browser_take_screenshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_press_key"
             --system-prompt "The project is already set up with all dependencies installed.
             The server is already running at localhost:3000.
             Logs from it are being written to logs.txt.
