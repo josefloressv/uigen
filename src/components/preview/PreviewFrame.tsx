@@ -15,6 +15,22 @@ export function PreviewFrame() {
   const [entryPoint, setEntryPoint] = useState<string>("/App.jsx");
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
+  // Fix: when the preview iframe steals browser focus, clicks on parent-page
+  // elements (e.g. the Preview/Code toggle buttons) may need two clicks —
+  // one to re-focus the parent window, one to trigger the action.
+  // By blurring the iframe on any parent-document mousedown (capture phase),
+  // we ensure the parent reclaims focus before the click event fires.
+  useEffect(() => {
+    const handleParentMouseDown = () => {
+      if (document.activeElement === iframeRef.current) {
+        iframeRef.current?.blur();
+      }
+    };
+    document.addEventListener("mousedown", handleParentMouseDown, true);
+    return () =>
+      document.removeEventListener("mousedown", handleParentMouseDown, true);
+  }, []);
+
   useEffect(() => {
     const updatePreview = () => {
       try {
